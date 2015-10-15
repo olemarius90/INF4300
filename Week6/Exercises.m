@@ -1,74 +1,1 @@
-%% Exercise 1. Matlab exercise for recognition of round objects
-
-%% Step 1: Read Image
-% Read in pills_etc.png.
-RGB = imread('pillsetc.png');
-imshow(RGB);
-
-%% Step 2: Threshold the Image
-% Convert the image to black and white in order to prepare for boundary tracing using bwboundaries.
-I = rgb2gray(RGB);
-threshold = graythresh(I);
-bw = im2bw(I,threshold);
-imshow(bw)
-
-%% Step 3: Remove the Noise
-% Using morphology functions, remove pixels which do not belong to the objects of interest.
-% remove all object containing fewer than 30 pixels
-bw = bwareaopen(bw,30);
-imshow(bw)
-%% fill a gap in the pen's cap
-se = strel('disk',2);
-bw = imclose(bw,se);
-imshow(bw)
-%% fill any holes, so that regionprops can be used to estimate
-% the area enclosed by each of the boundaries
-bw = imfill(bw,'holes');
-imshow(bw);
-
-%% Step 4: Find the Boundaries
-% Concentrate only on the exterior boundaries. Option 'noholes' will accelerate the processing by
-% preventing bwboundaries from searching for inner contours.
-[B,L] = bwboundaries(bw,'noholes');
-% Display the label matrix and draw each boundary
-imshow(label2rgb(L, @jet, [.5 .5 .5]))
-hold on
-for k = 1:length(B)
-    boundary = B{k};
-    plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)
-end
-
-%% Step 5: Determine which Objects are Round
-% Estimate each object's area and perimeter. Use these results to form a simple metric indicating the
-% roundness of an object:
-% metric = 4*pi*area/perimeter^2.
-% This metric is equal to one only for a circle and it is less than one for any other shape. The discrimination
-% process can be controlled by setting an appropriate threshold. In this example use a threshold of 0.94 so
-% that only the pills will be classified as round.
-% Use regionprops to obtain estimates of the area for all of the objects. Notice that the label matrix
-% returned by bwboundaries can be reused by regionprops.
-stats = regionprops(L,'Area','Centroid');
-threshold = 0.94;
-% loop over the boundaries
-for k = 1:length(B)
-    % obtain (X,Y) boundary coordinates corresponding to label 'k'
-    boundary = B{k};
-    % compute a simple estimate of the object's perimeter
-    delta_sq = diff(boundary).^2;
-    perimeter = sum(sqrt(sum(delta_sq,2)));
-    % obtain the area calculation corresponding to label 'k'
-    area = stats(k).Area;
-    % compute the roundness metric
-    metric = 4*pi*area/perimeter^2;
-    % display the results
-    metric_string = sprintf('%2.2f',metric);
-    % mark objects above the threshold with a black circle
-    if metric > threshold
-        centroid = stats(k).Centroid;
-        plot(centroid(1),centroid(2),'ko');
-    end
-    text(boundary(1,2)-35,boundary(1,1)+13,metric_string,'Color','y',...
-    'FontSize',14,'FontWeight','bold');
-end
-title(['Metrics closer to 1 indicate that ',...
-'the object is approximately round']);
+%% Exercise 1. Matlab exercise for recognition of round objects% This weeks exercises in on feature extraction, espacially extrancting% features from segmented objects. We will look at both some pre processing% tecniques and using some built in functions in matlab to extract% different featuresclear allclose all% Step 1: Read Image% Read in pills_etc.png.RGB = imread('pillsetc.png');figure(1)imshow(RGB);title('Original image');drawnow% Step 2: Threshold the Image% Convert the image to black and white in order to prepare for boundary % tracing using bwboundaries.I = rgb2gray(RGB);threshold = graythresh(I);bw = im2bw(I,threshold);figure(2);imshow(bw)title('Tresholded image');drawnow%% Step 3: Remove the Noise% Using morphology functions, remove pixels which do not belong to the% objects of interest. Remove all object containing fewer than 30 pixelsbw = bwareaopen(bw,30);figure(3)imshow(bw)title('Tresholded image, removed noise');drawnow% fill a gap in the pen's capse = strel('disk',2);bw = imclose(bw,se);figure(4)imshow(bw)title('Filled the gap in the cap');drawnow% fill any holes, so that regionprops can be used to estimate% the area enclosed by each of the boundariesbw = imfill(bw,'holes');figure(5)imshow(bw);title('Filled the holes');%% Step 4: Find the Boundaries% Concentrate only on the exterior boundaries. Option 'noholes' will % accelerate the processing by preventing bwboundaries from searching% for inner contours.[B,L] = bwboundaries(bw,'noholes');% Display the label matrix and draw each boundaryfigure(5)imshow(label2rgb(L, @jet, [.5 .5 .5]))hold onfor k = 1:length(B)    boundary = B{k};    plot(boundary(:,2), boundary(:,1), 'w', 'LineWidth', 2)endtitle('Image with indicated boundaries');drawnowh5 = gcf;%% Step 5: Determine which Objects are Round% Estimate each object's area and perimeter. Use these results to form% a simple metric indicating the roundness of an object:% metric = 4*pi*area/perimeter^2.% This metric is equal to one only for a circle and it is less than one % for any other shape. The discrimination process can be controlled by % setting an appropriate threshold. In this example use a threshold of % 0.94 so that only the pills will be classified as round.% Use regionprops to obtain estimates of the area for all of the % objects. Notice that the label matrix% returned by bwboundaries can be reused by regionprops.stats = regionprops(L,'Area','Centroid');threshold = 0.94;h2=figure(6);objects=allchild(h5);copyobj(get(h5,'children'),h2);% loop over the boundariesfor k = 1:length(B)    % obtain (X,Y) boundary coordinates corresponding to label 'k'    boundary = B{k};    % compute a simple estimate of the object's perimeter    delta_sq = diff(boundary).^2;    perimeter = sum(sqrt(sum(delta_sq,2)));    % obtain the area calculation corresponding to label 'k'    area = stats(k).Area;    % compute the roundness metric    metric = 4*pi*area/perimeter^2;    % display the results    metric_string = sprintf('%2.2f',metric);    % mark objects above the threshold with a black circle    if metric > threshold        centroid = stats(k).Centroid;        plot(centroid(1),centroid(2),'ko');    end    %Writing the value of our metric    text(boundary(1,2)-35,boundary(1,1)+13,metric_string,'Color','y',...    'FontSize',14,'FontWeight','bold');endtitle(['Metrics closer to 1 indicate that ',...'the object is approximately round']);drawnow%% Exercise 2. Matlab exercise for selecting grains with a given orientation% We will continue with an example of a image of rice. And we want to find% some grains with a certain orientation.% Step 1: Read Imageclear allclose allI = imread('rice.png');figure(7)imshow(I)title('Original image');drawnow%% Step 2: Use Morphological Opening to Estimate the Background% Notice that the background illumination is brighter in the center of the % image than at the bottom. Use the% IMOPEN function to estimate the background illumination.background = imopen(I,strel('disk',15));% Display the Background Approximation as a Surfacefigure(8)subplot(211)surf(double(background(1:8:end,1:8:end))),zlim([0 255]);set(gca,'ydir','reverse');title('Background');subplot(212)imagesc(background)colormap graydrawnow%% Step 3: Subtract the Backround Image from the Original Image% Since the image and background are of class uint8, use the function% IMSUBTRACT to subtract the background.figure(9)I2 = imsubtract(I,background);imshow(I2)title('Image with background subtracted');drawnow%% Step 4: Increase the Image Contrastfigure(10)I3 = imadjust(I2);imshow(I3);title('Contrast increased');drawnow%% Step 5: Threshold the Image% Create a new binary image by thresholding the adjusted image.figure(11)level = graythresh(I3);bw = im2bw(I3,level);imshow(bw)title('Image tresholded');drawnow%% Step 6: Label Objects in the Image% The function BWLABEL labels all connected component in the binary image. % The accuracy of your results depend on: the size of the objects, the % accuracy of your approximated background, whether you set the% connectivity parameter to 4 or 8, whether or not any objects are% touching (in which case they may be labeled as one object). Some of the%rice grains are touching.[labeled,numObjects] = bwlabel(bw,4); % 4-connectednumObjects % Count all distinct objects in the image.% Step 7: Examine the Label Matrix% Each distinct object is labeled with the same integer value. Crop part of a grain that is labeled with 50s.rect = [105 125 10 10];grain = imcrop(labeled,rect) % Crop a portion of labeled% Step 8: View the Whole Label Matrix% A good way to view a label matrix is to display it as a pseudo-color indexed image. In the pseudo-color% image, the number that identifies each object in the label matrix maps to a different color in the% associated colormap matrix. Use LABEL2RGB to choose the colormap, the background color, and how% objects in the label matrix map to colors in the colormap.figure(12)RGB_label = label2rgb(labeled, @spring, 'c', 'shuffle');imshow(RGB_label)title('Pseudo color image');%% Step 9: Measure Object Properties in the Image% The REGIONPROPS command measures object or region properties in an image% and returns them in a structure array. When applied to an image with % labeled components, it creates one structure element for% each component. Use regionprops to create a structure array containing % some basic properties for the labeled image.graindata = regionprops(labeled,'basic')% To find the area of the component labeled with 50s, use dot notation to% access the Area field in the 50th element in the graindata structure% array.graindata(50).Area% Step 10: Compute Statistical Properties of Objects in the Image% Create a new vector allgrains which holds the area measurement for each grainallgrains = [graindata.Area];max_area = max(allgrains) % Find the maximum area of all the grains.biggrain = find(allgrains==max_area) % Find the grain number that has this area.mean(allgrains) % Find the mean of the area of all the grains.% Step 11: Create a Histogram of the Area of the Grainsnbins = 20;figure(13)hist(allgrains,nbins)title('Histrogram of grain area');%% Step 12: Measure the orientation of the Grains% Now, measure the orientation of each grain% Find out how yourself :-)graindata2 = regionprops(labeled,'Orientation','Centroid')% Step 13: Select the grains with orientation within 0 and +/-20 degrees% Do it by yourself!figure(14)imshow(I), hold onfor k = 1:length(graindata2)    metric = graindata2(k).Orientation;    metric_string = sprintf('%1.1f',metric);    if -20 <= metric && metric <= 20        centroid = graindata2(k).Centroid;        plot(centroid(1),centroid(2),'g+');        text(centroid(1)+2,centroid(2),metric_string,'Color','g',...        'FontSize',14,'FontWeight','bold');    endendtitle('Grains with orientation indicated');% A challenge for you:% The grain which has orientation of 0.0 in the image is actually not a% grain just some noise. Try to remove this noise!%% Exercise 3% Use the images circle2.png, circle5.png and circle15.png (from% http://www.uio.no/studier/emner/matnat/ifi/INF4300/h15/undervisningsmateriale ) to% evaluate the accuracy of the different formulas for estimation of% area and perimeter given in the lecture notes. % Ill simply get you going by using the built in regionprops in matlab% Loading the imagesclear allclose allcircle2 = imread('circle2.png');circle5 = imread('circle5.png');circle15 = imread('circle15.png');% Displaying themfigure(15)subplot(311)imshow(circle2)title('Circle 2');subplot(312)imshow(circle5)title('Circle 5');subplot(313)imshow(circle15)title('Circle 15');% Filling the circlescircle2_filled = imfill(circle2,'holes');circle5_filled = imfill(circle5,'holes');circle15_filled = imfill(circle15,'holes');% Displayingfigure(16)subplot(311)imshow(circle2_filled)title('Circle 2 filled');subplot(312)imshow(circle5_filled)title('Circle 5 filled');subplot(313)imshow(circle15_filled)title('Circle 15 filled');% Using regionprops to find the areacircle2_label = bwlabel(circle2_filled,4);circle2_props = regionprops(circle2_label,'Area')circle5_label = bwlabel(circle5_filled,4);circle5_props = regionprops(circle5_label,'Area')circle15_label = bwlabel(circle15_filled,4);circle15_props = regionprops(circle15_label,'Area')%I'm leaving the rest of the fun for you!!!%% Exercise 4% See the solution below:% post_id = 570; %delete this line to force new post;% permaLink = http://inf4300.olemarius.net/2015/10/15/exercises-m/;
