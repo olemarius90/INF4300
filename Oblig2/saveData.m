@@ -118,7 +118,7 @@ dlmwrite('new_data/mosaic2_test.txt',mosaic2_test);
 dlmwrite('new_data/mosaic3_test.txt',mosaic3_test);
 
 % Save the traning mask as .txt file
-save('new_data/training_mask.txt','training_mask');
+dlmwrite('new_data/training_mask.txt',training_mask);
 
 % Save the example GLCM matrices as .txt files
 dlmwrite('new_data/texture1dx1dy0.txt',texture1dx1dy0);
