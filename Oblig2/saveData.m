@@ -48,17 +48,17 @@ subplot(224)
 imshow(texture4,[]);
 title('Texture 4');
 
+% Calculate the GLCM for direction dx = 0 dy = -1
+texture1dx0dymin1 = GLCM(texture1_norm,G,0,-1,0,1);
+texture2dx0dymin1 = GLCM(texture2_norm,G,0,-1,0,1);
+texture3dx0dymin1 = GLCM(texture3_norm,G,0,-1,0,1);
+texture4dx0dymin1 = GLCM(texture4_norm,G,0,-1,0,1);
+
 % Calculate the GLCM for direction dx = 1 dy = 0
 texture1dx1dy0 = GLCM(texture1_norm,G,1,0,0,1);
 texture2dx1dy0 = GLCM(texture2_norm,G,1,0,0,1);
 texture3dx1dy0 = GLCM(texture3_norm,G,1,0,0,1);
 texture4dx1dy0 = GLCM(texture4_norm,G,1,0,0,1);
-
-% Calculate the GLCM for direction dx = 0 dy = 2
-texture1dx0dy1 = GLCM(texture1_norm,G,0,1,0,1);
-texture2dx0dy1 = GLCM(texture2_norm,G,0,1,0,1);
-texture3dx0dy1 = GLCM(texture3_norm,G,0,1,0,1);
-texture4dx0dy1 = GLCM(texture4_norm,G,0,1,0,1);
 
 % Calculate the GLCM for direction dx = 1 dy = -1
 texture1dx1dymin1 = GLCM(texture1_norm,G,1,-1,0,1);
@@ -66,22 +66,22 @@ texture2dx1dymin1 = GLCM(texture2_norm,G,1,-1,0,1);
 texture3dx1dymin1 = GLCM(texture3_norm,G,1,-1,0,1);
 texture4dx1dymin1 = GLCM(texture4_norm,G,1,-1,0,1);
 
-% Calculate the GLCM for direction dx = -1 dy = 1
-texture1dxmin1dy1 = GLCM(texture1_norm,G,-1,1,0,1);
-texture2dxmin1dy1 = GLCM(texture2_norm,G,-1,1,0,1);
-texture3dxmin1dy1 = GLCM(texture3_norm,G,-1,1,0,1);
-texture4dxmin1dy1 = GLCM(texture4_norm,G,-1,1,0,1);
+% Calculate the GLCM for direction dx = -1 dy = -1
+texture1dxmin1dymin1 = GLCM(texture1_norm,G,-1,-1,0,1);
+texture2dxmin1dymin1 = GLCM(texture2_norm,G,-1,-1,0,1);
+texture3dxmin1dymin1 = GLCM(texture3_norm,G,-1,-1,0,1);
+texture4dxmin1dymin1 = GLCM(texture4_norm,G,-1,-1,0,1);
 
 % Try to plot some of the GLCM's
 figure(2)
 subplot(221);
-imagesc(texture1dx1dy0);
+imagesc(texture2dx0dymin1);
 subplot(222);
 imagesc(texture2dx1dy0);
 subplot(223);
-imagesc(texture3dx1dy0);
+imagesc(texture2dx1dymin1);
 subplot(224);
-imagesc(texture4dx1dy0);
+imagesc(texture2dxmin1dymin1);
 
 % Save the traning and test images
 save('new_data/mosaic1_train','mosaic1_train');
@@ -92,25 +92,25 @@ save('new_data/mosaic3_test','mosaic3_test');
 save('new_data/training_mask','training_mask');
 
 % Save the example GLCM matrices
+save('new_data/texture1dx0dymin1','texture1dx0dymin1');
+save('new_data/texture2dx0dymin1','texture2dx0dymin1');
+save('new_data/texture3dx0dymin1','texture3dx0dymin1');
+save('new_data/texture4dx0dymin1','texture4dx0dymin1');
+
 save('new_data/texture1dx1dy0','texture1dx1dy0');
 save('new_data/texture2dx1dy0','texture2dx1dy0');
 save('new_data/texture3dx1dy0','texture3dx1dy0');
 save('new_data/texture4dx1dy0','texture4dx1dy0');
-
-save('new_data/texture1dx0dy1','texture1dx0dy1');
-save('new_data/texture2dx0dy1','texture2dx0dy1');
-save('new_data/texture3dx0dy1','texture3dx0dy1');
-save('new_data/texture4dx0dy1','texture4dx0dy1');
 
 save('new_data/texture1dx1dymin1','texture1dx1dymin1');
 save('new_data/texture2dx1dymin1','texture2dx1dymin1');
 save('new_data/texture3dx1dymin1','texture3dx1dymin1');
 save('new_data/texture4dx1dymin1','texture4dx1dymin1');
 
-save('new_data/texture1dxmin1dy1','texture1dxmin1dy1');
-save('new_data/texture2dxmin1dy1','texture2dxmin1dy1');
-save('new_data/texture3dxmin1dy1','texture3dxmin1dy1');
-save('new_data/texture4dxmin1dy1','texture4dxmin1dy1');
+save('new_data/texture1dxmin1dymin1','texture1dxmin1dymin1');
+save('new_data/texture2dxmin1dymin1','texture2dxmin1dymin1');
+save('new_data/texture3dxmin1dymin1','texture3dxmin1dymin1');
+save('new_data/texture4dxmin1dymin1','texture4dxmin1dymin1');
 
 % Save the traning and test images as .txt files
 dlmwrite('new_data/mosaic1_train.txt',mosaic1_train);
@@ -121,24 +121,24 @@ dlmwrite('new_data/mosaic3_test.txt',mosaic3_test);
 dlmwrite('new_data/training_mask.txt',training_mask);
 
 % Save the example GLCM matrices as .txt files
+dlmwrite('new_data/texture1dx0dymin1.txt',texture1dx0dymin1);
+dlmwrite('new_data/texture2dx0dymin1.txt',texture2dx0dymin1);
+dlmwrite('new_data/texture3dx0dymin1.txt',texture3dx0dymin1);
+dlmwrite('new_data/texture4dx0dymin1.txt',texture4dx0dymin1);
+
 dlmwrite('new_data/texture1dx1dy0.txt',texture1dx1dy0);
 dlmwrite('new_data/texture2dx1dy0.txt',texture2dx1dy0);
 dlmwrite('new_data/texture3dx1dy0.txt',texture3dx1dy0);
 dlmwrite('new_data/texture4dx1dy0.txt',texture4dx1dy0);
-
-dlmwrite('new_data/texture1dx0dy1.txt',texture1dx0dy1);
-dlmwrite('new_data/texture2dx0dy1.txt',texture2dx0dy1);
-dlmwrite('new_data/texture3dx0dy1.txt',texture3dx0dy1);
-dlmwrite('new_data/texture4dx0dy1.txt',texture4dx0dy1);
 
 dlmwrite('new_data/texture1dx1dymin1.txt',texture1dx1dymin1);
 dlmwrite('new_data/texture2dx1dymin1.txt',texture2dx1dymin1);
 dlmwrite('new_data/texture3dx1dymin1.txt',texture3dx1dymin1);
 dlmwrite('new_data/texture4dx1dymin1.txt',texture4dx1dymin1);
 
-dlmwrite('new_data/texture1dxmin1dy1.txt',texture1dxmin1dy1);
-dlmwrite('new_data/texture2dxmin1dy1.txt',texture2dxmin1dy1);
-dlmwrite('new_data/texture3dxmin1dy1.txt',texture3dxmin1dy1);
-dlmwrite('new_data/texture4dxmin1dy1.txt',texture4dxmin1dy1);
+dlmwrite('new_data/texture1dxmin1dymin1.txt',texture1dxmin1dymin1);
+dlmwrite('new_data/texture2dxmin1dymin1.txt',texture2dxmin1dymin1);
+dlmwrite('new_data/texture3dxmin1dymin1.txt',texture3dxmin1dymin1);
+dlmwrite('new_data/texture4dxmin1dymin1.txt',texture4dxmin1dymin1);
 
 
